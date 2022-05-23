@@ -1,0 +1,70 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  referentialIntegrity = "prisma"
+  url                  = env("DEV_DATABASE_URL")
+}
+
+model User {
+  id           Int    @id @default(autoincrement())
+  email        String @unique
+  passwordHash String
+}
+
+model Product {
+  id              Int               @id @default(autoincrement())
+  name            String
+  description     String            @db.VarChar(200)
+  price           Float
+  quantity        Int
+  state           ProductState      @default(FREEZE)
+  categorys       Category[]
+  ProductSnapShot ProductSnapShot[]
+}
+
+enum ProductState {
+  FREEZE
+  ONSALE
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  Products Product[]
+}
+
+model ProductSnapShot {
+  origin      Product @relation(fields: [productId], references: [id])
+  productId   Int
+  Order       Order   @relation(fields: [orderId], references: [id])
+  orderId     Int
+  
+  name        String
+  description String  @db.VarChar(200)
+  price       Float
+  quantity    Int
+
+  @@id([productId, orderId])
+}
+
+model Order {
+  id         Int               @id @default(autoincrement())
+  createdAt  DateTime          @default(now())
+  state      OrderState
+  receiver   String
+  address    String
+  adjustment Float
+  products   ProductSnapShot[]
+}
+
+enum OrderState {
+  UNPAY
+  PAID
+  TRANSPORT
+  RECEIVED
+  RETURN
+}
