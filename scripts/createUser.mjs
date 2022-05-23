@@ -6,17 +6,18 @@ async function createUser(email, password) {
     const prisma = new PrismaClient()
 
     const passwordHash = bcrypt.hashSync(password, 8)
-    const user = await prisma.user.create({
-      data: {
+    const user = await prisma.user.createMany({
+      data: [{
         email,
         passwordHash,
-      }
+      }],
+      skipDuplicates: true
     })
-
+    console.log(user)
     await prisma.$disconnect()
   } catch (e) {
     console.log(e,'https://www.prisma.io/docs/reference/api-reference/error-reference#')
   }
 }
 
-createUser('example00@email.com', '123456')
+createUser('example01@email.com', '123456')

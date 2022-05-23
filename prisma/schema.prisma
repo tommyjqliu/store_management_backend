@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider             = "mysql"
   referentialIntegrity = "prisma"
-  url                  = env("DEV_DATABASE_URL")
+  url                  = env("DATABASE_URL")
 }
 
 model User {
@@ -19,9 +19,10 @@ model Product {
   id              Int               @id @default(autoincrement())
   name            String
   description     String            @db.VarChar(200)
+  pictures        Json
   price           Float
   quantity        Int
-  state           ProductState      @default(FREEZE)
+  state           ProductState      @default(ONSALE)
   categorys       Category[]
   ProductSnapShot ProductSnapShot[]
 }
@@ -38,13 +39,14 @@ model Category {
 }
 
 model ProductSnapShot {
-  origin      Product @relation(fields: [productId], references: [id])
-  productId   Int
-  Order       Order   @relation(fields: [orderId], references: [id])
-  orderId     Int
-  
+  product    Product @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId Int
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   Int
+
   name        String
-  description String  @db.VarChar(200)
+  description String @db.VarChar(200)
+  pictures    Json
   price       Float
   quantity    Int
 
@@ -54,10 +56,10 @@ model ProductSnapShot {
 model Order {
   id         Int               @id @default(autoincrement())
   createdAt  DateTime          @default(now())
-  state      OrderState
+  state      OrderState        @default(UNPAY)
   receiver   String
   address    String
-  adjustment Float
+  adjustment Float             @default(0)
   products   ProductSnapShot[]
 }
 
