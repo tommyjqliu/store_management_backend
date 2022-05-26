@@ -5,4 +5,7 @@ export default {
   },
   tailwindcss: {},
   plugins: ["@umijs/plugins/dist/tailwindcss"],
+  chainWebpack(memo, { env, webpack }) {
+    memo.mode('development')
+  },
 };
