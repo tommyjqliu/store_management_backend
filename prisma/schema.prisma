@@ -19,7 +19,7 @@ model Product {
   id              Int               @id @default(autoincrement())
   name            String
   description     String            @db.VarChar(200)
-  pictures        Json
+  pictures        Json              @default("[]")
   price           Float
   quantity        Int
   state           ProductState      @default(ONSALE)
@@ -39,14 +39,14 @@ model Category {
 }
 
 model ProductSnapShot {
-  product    Product @relation(fields: [productId], references: [id], onDelete: SetNull)
+  product   Product @relation(fields: [productId], references: [id], onDelete: SetNull)
   productId Int
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   Int
 
   name        String
   description String @db.VarChar(200)
-  pictures    Json
+  pictures    Json   @default("[]")
   price       Float
   quantity    Int
 

@@ -24,15 +24,14 @@ export default async function (req: UmiApiRequest, res: UmiApiResponse) {
 						OR: requestProducts.map(({ id }) => ({ id }))
 					},
 				})
-
-				let dict: { [index: string]: Product } = {}
+				const dict: { [index: string]: Product } = {}
 				for (const p of currentProducts) {
 					dict[p.id] = p
 				}
 
 				const success = requestProducts.every(
 					({ id, quantity }) =>
-						quantity > 0 && dict[id].quantity >= quantity && dict[id].state !== 'FREEZE'
+						quantity > 0 && dict[id] && dict[id].quantity >= quantity && dict[id].state !== 'FREEZE'
 				)
 
 				if (success) {

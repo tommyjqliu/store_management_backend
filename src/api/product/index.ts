@@ -12,6 +12,7 @@ export default async function (req: UmiApiRequest, res: UmiApiResponse) {
 						categorys: {},
 					}
 				})
+
 				res.status(200).json(products);
 				await prisma.$disconnect()
 				break
