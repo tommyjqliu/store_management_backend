@@ -20,4 +20,4 @@ async function createUser(email, password) {
   }
 }
 
-createUser('example01@email.com', '123456')
+createUser('example@email.com', '123456')

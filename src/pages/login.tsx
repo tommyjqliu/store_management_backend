@@ -1,9 +1,9 @@
 import { Form, Input, Button } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import { history } from "umi";
 
 
-async function login({email, password}) {
+async function login({ email, password }) {
 	try {
 		const res = await fetch('/api/login', {
 			method: 'POST',
@@ -17,17 +17,19 @@ async function login({email, password}) {
 			return;
 		}
 		const data = await res.json();
-		alert(`欢迎回来，${data.name}`);
-		// history.push('/posts/create');
+		localStorage.setItem("isLogin", "true");
+		history.push('/');
 	} catch (err) {
 		console.error(err)
 	}
 }
 
 export default function () {
-	const onFinish = (values: any) => {
-		console.log('Success:', values);
-		login(values)
+	const [loading, setLoading] = useState(false)
+	const onFinish = async (values: any) => {
+		setLoading(true)
+		await login(values)
+		setLoading(false)
 	};
 
 	const onFinishFailed = (errorInfo: any) => {
@@ -41,6 +43,7 @@ export default function () {
 			onFinish={onFinish}
 			onFinishFailed={onFinishFailed}
 			autoComplete="off"
+			className='w-96'
 		>
 			<Form.Item
 				label="Email"
@@ -60,7 +63,7 @@ export default function () {
 
 
 			<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-				<Button type="primary" htmlType="submit">
+				<Button type="primary" htmlType="submit" loading={loading}>
 					Submit
 				</Button>
 			</Form.Item>

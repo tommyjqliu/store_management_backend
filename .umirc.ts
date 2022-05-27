@@ -5,7 +5,28 @@ export default {
   },
   tailwindcss: {},
   plugins: ["@umijs/plugins/dist/tailwindcss"],
-  chainWebpack(memo, { env, webpack }) {
-    memo.mode('development')
-  },
+  // chainWebpack(memo, { env, webpack }) {
+  //   memo.mode('development')
+  // },
+  routes: [
+    {
+      exact: true, path: '/', component: 'index',
+      wrappers: [
+        '@/wrappers/auth',
+      ],
+    },
+    {
+      exact: true, path: '/product', component: 'product',
+      wrappers: [
+        '@/wrappers/auth',
+      ],
+    },
+    {
+      exact: true, path: '/order', component: 'order',
+      wrappers: [
+        '@/wrappers/auth',
+      ],
+    },
+    { exact: true, path: '/login', component: 'login' },
+  ]
 };

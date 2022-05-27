@@ -1,36 +1,55 @@
 import React from 'react';
-import { Link, Outlet } from 'umi';
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Link, Outlet, useLocation, history } from 'umi';
+import { Layout, Menu,  Button } from 'antd';
 import 'antd/dist/antd.css';
 
 const { Header, Content, Footer } = Layout;
 
 export default () => {
+  const location = useLocation();
+  const currentPath = location.pathname.split('/')[1]
+  const logout = () => {
+    localStorage.removeItem('isLogin')
+    history.push('/login')
+  }
+  if (currentPath === 'login') {
+    return (
+      <Layout>
+        {/* extra div to fix css priority problem */}
+        <div className='min-h-screen'>
+
+          <Content className="p-12 flex flex-col items-center">
+            <div className='text-5xl p-12 font-medium'>Store Backend</div> 
+            <div className="bg-white p-6 rounded-md w-min"><Outlet /></div>
+          </Content>
+          <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+        </div>
+      </Layout>
+    )
+  }
   return (
     <Layout>
-      <Header>
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={['2']}
-          items={new Array(15).fill(null).map((_, index) => {
-            const key = index + 1;
-            return {
-              key,
-              label: `nav ${key}`,
-            };
-          })}
-        />
-      </Header>
-      <Content style={{ padding: '0 50px' }}>
-        <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb>
-        <div className="site-layout-content"><Outlet /></div>
-      </Content>
-      <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+      {/* extra div to fix css priority problem */}
+      <div className='min-h-screen'>
+        <Header className='flex items-center justify-between'>
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            selectedKeys={[currentPath]}
+            defaultSelectedKeys={['index']}
+            items={[
+              { label: <Link to="/">Index</Link>, key: '' },
+              { label: <Link to="/product">Product</Link>, key: 'product' },
+              { label: <Link to="/order">Order</Link>, key: 'order' },
+            ]}
+          />
+          <Button danger type="primary" className='' onClick={logout}>Logout</Button>
+        </Header>
+        <Content className="p-12">
+          <div className="bg-white p-6 rounded-md"><Outlet /></div>
+        </Content>
+        <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+      </div>
     </Layout>
   );
 }

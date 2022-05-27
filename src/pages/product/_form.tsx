@@ -84,7 +84,7 @@ export default ({ onFinish, form, isCreate=false }: formProps) => {
 			</Form.Item>
 			<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
 				<Button type="primary" htmlType="submit" loading={loading}>
-					Create
+					Submit
 				</Button>
 			</Form.Item>
 		</Form>

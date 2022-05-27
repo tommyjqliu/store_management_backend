@@ -1,7 +1,14 @@
 import { UmiApiRequest, UmiApiResponse } from "umi";
 import { PrismaClient, Product } from '@prisma/client'
+import { verifyToken } from "@/utils/jwt";
 
 export default async function (req: UmiApiRequest, res: UmiApiResponse) {
+	try {
+		if (!req.cookies?.token) { return res.status(401).text('Unauthorized') }
+		await verifyToken(req.cookies.token)
+	} catch (error: any) {
+		return res.status(401).json(error);
+	}
 	try {
 		let prisma: PrismaClient;
 		switch (req.method) {
@@ -28,7 +35,6 @@ export default async function (req: UmiApiRequest, res: UmiApiResponse) {
 				for (const p of currentProducts) {
 					dict[p.id] = p
 				}
-
 				const success = requestProducts.every(
 					({ id, quantity }) =>
 						quantity > 0 && dict[id] && dict[id].quantity >= quantity && dict[id].state !== 'FREEZE'
@@ -44,6 +50,7 @@ export default async function (req: UmiApiRequest, res: UmiApiResponse) {
 						prisma.order.create({
 							data: {
 								...req.body.order,
+								// createdAt: "2022-05-27T16:06:57.405Z",
 								products: {
 									create: requestProducts.map(
 										({ id, quantity, price }) => ({

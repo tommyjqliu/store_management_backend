@@ -1,7 +1,14 @@
 import { UmiApiRequest, UmiApiResponse } from "umi";
 import { PrismaClient } from '@prisma/client'
+import { verifyToken } from "@/utils/jwt";
 
 export default async function (req: UmiApiRequest, res: UmiApiResponse) {
+  try {
+		if (!req.cookies?.token) { return res.status(401).text('Unauthorized') }
+		await verifyToken(req.cookies.token)
+	} catch (error: any) {
+		return res.status(401).json(error);
+	}
   try {
     let prisma: PrismaClient;
     switch (req.method) {
