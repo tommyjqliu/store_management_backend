@@ -50,7 +50,6 @@ export default async function (req: UmiApiRequest, res: UmiApiResponse) {
 						prisma.order.create({
 							data: {
 								...req.body.order,
-								// createdAt: "2022-05-27T16:06:57.405Z",
 								products: {
 									create: requestProducts.map(
 										({ id, quantity, price }) => ({
